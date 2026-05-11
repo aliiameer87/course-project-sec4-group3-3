@@ -65,14 +65,12 @@
 // Allow cross-origin requests (CORS) if needed.
 // Allow HTTP methods: GET, POST, PUT, DELETE, OPTIONS.
 // Allow headers: Content-Type, Authorization.
-
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
 // TODO: Handle preflight OPTIONS request.
 // If the request method is OPTIONS, return HTTP 200 and exit.
-
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit;
@@ -88,7 +86,6 @@ $db = getDBConnection();
 
 // TODO: Read the HTTP request method.
 // $method = $_SERVER['REQUEST_METHOD'];
-
 $method    = $_SERVER['REQUEST_METHOD'];
 // TODO: Read and decode the request body for POST and PUT requests.
 // $rawData = file_get_contents('php://input');
@@ -101,7 +98,6 @@ $data      = json_decode($rawData, true) ?? [];
 // $id        = $_GET['id']         ?? null;  // integer week id
 // $weekId    = $_GET['week_id']    ?? null;  // integer week id for comments queries
 // $commentId = $_GET['comment_id'] ?? null;  // integer comment id
-
 $action    = $_GET['action']     ?? null;
 $id        = $_GET['id']         ?? null;
 $weekId    = $_GET['week_id']    ?? null;
