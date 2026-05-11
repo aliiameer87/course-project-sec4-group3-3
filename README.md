@@ -23,7 +23,7 @@ The website covers five functional areas, each assigned to one team member.
 |------|-------------|------------|-----------------|
 | 1 | Home Page, Authentication & User Management | 202204223 | rayanmahmood56|
 | 2 | Course Resources |202204223| rayanmahmood56|
-| 3 | Weekly Breakdown | | |
+| 3 | Weekly Breakdown |202003283 | Ali Abdulameer Ali|
 | 4 | Assignments | | |
 | 5 | Discussion Board | | |
 
