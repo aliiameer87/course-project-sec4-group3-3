@@ -98,6 +98,7 @@ function renderWeekDetails(week) {
     const a  = document.createElement('a');
     a.href = url;
     a.textContent = url;
+    a.target="_blank";
     li.appendChild(a);
     weekLinksList.appendChild(li);
   });
@@ -181,10 +182,10 @@ async function handleAddComment(event) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      week_id: currentWeekId,
-      author: "Student",
-      text: commentText
-    })
+    week_id: Number(currentWeekId),
+    author: "Student",
+    text: commentText
+})
   });
   const result = await response.json();
 
@@ -227,22 +228,34 @@ async function initializePage() {
     return;
   }
 
-  const [weekRes, commentsRes] = await Promise.all([
-    fetch(`./api/index.php?id=${currentWeekId}`),
-    fetch(`./api/index.php?action=comments&week_id=${currentWeekId}`)
-  ]);
+  try {
+        const [weekRes, commentsRes] = await Promise.all([
+            fetch(`./api/index.php?id=${currentWeekId}`),
+            fetch(`./api/index.php?action=comments&week_id=${currentWeekId}`)
+        ]);
 
-  const weekResult     = await weekRes.json();
-  const commentsResult = await commentsRes.json();
+        const weekResult = await weekRes.json();
+        const commentsResult = await commentsRes.json();
 
-  if (weekResult.success) {
-    renderWeekDetails(weekResult.data);
-    currentComments = commentsResult.success ? commentsResult.data : [];
-    renderComments();
-    commentForm.addEventListener('submit', handleAddComment);
-  } else {
-    weekTitle.textContent = "Week not found.";
-  }
+        if (weekResult.success) {
+            renderWeekDetails(weekResult.data);
+
+            currentComments = commentsResult.success
+                ? commentsResult.data
+                : [];
+
+            renderComments();
+
+            commentForm.addEventListener('submit', handleAddComment);
+        } else {
+            weekTitle.textContent = "Week not found.";
+        }
+
+    } catch (error) {
+        console.error(error);
+        weekTitle.textContent = "Error loading week.";
+    }
+
 }
 
 // --- Initial Page Load ---
