@@ -196,7 +196,7 @@ function getWeekById(PDO $db, $id): void
     // TODO: If found, sendResponse success with the week.
     // If not found, sendResponse error with HTTP 404.
     
-{
+
     if (!$id || !is_numeric($id)) {
         sendResponse(['success' => false, 'message' => 'Invalid id'], 400);
     }
@@ -384,6 +384,7 @@ function deleteWeek(PDO $db, $id): void
     if (!$id || !is_numeric($id)) {
         sendResponse(['success' => false, 'message' => 'Invalid id'], 400);
     }
+    }
 
     $stmt = $db->prepare("DELETE FROM weeks WHERE id = ?");
     $stmt->execute([$id]);
@@ -519,6 +520,15 @@ function deleteComment(PDO $db, $commentId): void
     {
     if (!$commentId || !is_numeric($commentId)) {
         sendResponse(['success' => false, 'message' => 'Invalid comment id'], 400);
+        
+    $stmt = $db->prepare("DELETE FROM comments_week WHERE id = ?");
+    $stmt->execute([$commentId]);
+
+    if ($stmt->rowCount() > 0) {
+        sendResponse(['success' => true, 'message' => 'Comment deleted']);
+    } else {
+        sendResponse(['success' => false, 'message' => 'Comment not found'], 404);
+    }
     
 }
 
