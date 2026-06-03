@@ -78,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 // TODO: Include the shared database connection file.
 // require_once __DIR__ . '/../../common/db.php';
 require_once __DIR__ . '/../../common/db.php';
-
+session_start();
 
 // TODO: Get the PDO database connection.
 // $db = getDBConnection();
@@ -248,7 +248,7 @@ function createWeek(PDO $db, array $data): void
 
     // TODO: If rowCount() > 0, sendResponse HTTP 201 with the new id.
     // Otherwise sendResponse HTTP 500.
-    {
+    
     if (empty($data['title']) || empty($data['start_date'])) {
         sendResponse(['success' => false, 'message' => 'Missing required fields'], 400);
     }
@@ -256,20 +256,31 @@ function createWeek(PDO $db, array $data): void
     $title       = sanitizeInput($data['title']);
     $start_date  = sanitizeInput($data['start_date']);
     $description = sanitizeInput($data['description'] ?? "");
-    $links       = isset($data['links']) && is_array($data['links']) ? json_encode($data['links']) : json_encode([]);
+    $links       = isset($data['links']) && is_array($data['links'])
+        ? json_encode($data['links'])
+        : json_encode([]);
 
     if (!validateDate($start_date)) {
         sendResponse(['success' => false, 'message' => 'Invalid date format'], 400);
     }
 
-    $stmt = $db->prepare("INSERT INTO weeks (title, start_date, description, links) VALUES (?, ?, ?, ?)");
+    $stmt = $db->prepare(
+        "INSERT INTO weeks (title, start_date, description, links)
+         VALUES (?, ?, ?, ?)" );
     $stmt->execute([$title, $start_date, $description, $links]);
 
     if ($stmt->rowCount() > 0) {
-        sendResponse(['success' => true, 'message' => 'Week created', 'id' => $db->lastInsertId()], 201);
-    } else {
-        sendResponse(['success' => false, 'message' => 'Failed to create week'], 500);
+        sendResponse([
+            'success' => true,
+            'message' => 'Week created',
+            'id' => $db->lastInsertId()
+        ], 201);
     }
+
+    sendResponse([
+        'success' => false,
+        'message' => 'Failed to create week'
+    ], 500);
 }
 
 
@@ -311,7 +322,7 @@ function updateWeek(PDO $db, array $data): void
     {
     if (empty($data['id'])) {
         sendResponse(['success' => false, 'message' => 'Missing id'], 400);
-    }
+    } }
     $id = $data['id'];
 
     $stmt = $db->prepare("SELECT id FROM weeks WHERE id = ?");
@@ -380,20 +391,27 @@ function deleteWeek(PDO $db, $id): void
 
     // TODO: If rowCount() > 0, sendResponse HTTP 200.
     // Otherwise sendResponse HTTP 500.
-    {
-    if (!$id || !is_numeric($id)) {
-        sendResponse(['success' => false, 'message' => 'Invalid id'], 400);
-    }
+     if (!$id || !is_numeric($id)) {
+        sendResponse([
+            'success' => false,
+            'message' => 'Invalid id'
+        ], 400);
     }
 
     $stmt = $db->prepare("DELETE FROM weeks WHERE id = ?");
     $stmt->execute([$id]);
 
     if ($stmt->rowCount() > 0) {
-        sendResponse(['success' => true, 'message' => 'Week deleted']);
-    } else {
-        sendResponse(['success' => false, 'message' => 'Week not found'], 404);
+        sendResponse([
+            'success' => true,
+            'message' => 'Week deleted'
+        ]);
     }
+
+    sendResponse([
+        'success' => false,
+        'message' => 'Week not found'
+    ], 404);
 }
 
 
@@ -433,7 +451,7 @@ function getCommentsByWeek(PDO $db, $weekId): void
 
     sendResponse(['success' => true, 'data' => $comments]);
 }
-
+}
 function createComment(PDO $db, array $data): void {
     if (empty($data['week_id']) || empty($data['author']) || empty(trim($data['text']))) {
         sendResponse(['success' => false, 'message' => 'Missing fields'], 400);
@@ -478,24 +496,6 @@ function createComment(PDO $db, array $data): void {
  * Response (week not found): HTTP 404.
  * Response (missing fields): HTTP 400.
  */
-function createComment(PDO $db, array $data): void
-{
-    // TODO: Validate that week_id, author, and text are all present and
-    // non-empty after trimming. If any are missing, sendResponse HTTP 400.
-
-    // TODO: Validate that week_id is numeric.
-
-    // TODO: Check that a week with this id exists in the weeks table.
-    // If not, sendResponse HTTP 404.
-
-    // TODO: INSERT INTO comments_week (week_id, author, text)
-    //       VALUES (?, ?, ?)
-
-    // TODO: If rowCount() > 0, sendResponse HTTP 201 with the new id
-    //       and the full new comment object.
-    // Otherwise sendResponse HTTP 500.
-    
-}
 
 
 /**
@@ -517,19 +517,27 @@ function deleteComment(PDO $db, $commentId): void
 
     // TODO: If rowCount() > 0, sendResponse HTTP 200.
     // Otherwise sendResponse HTTP 500.
-    {
     if (!$commentId || !is_numeric($commentId)) {
-        sendResponse(['success' => false, 'message' => 'Invalid comment id'], 400);
-        
+        sendResponse([
+            'success' => false,
+            'message' => 'Invalid comment id'
+        ], 400);
+    }
+
     $stmt = $db->prepare("DELETE FROM comments_week WHERE id = ?");
     $stmt->execute([$commentId]);
 
     if ($stmt->rowCount() > 0) {
-        sendResponse(['success' => true, 'message' => 'Comment deleted']);
-    } else {
-        sendResponse(['success' => false, 'message' => 'Comment not found'], 404);
+        sendResponse([
+            'success' => true,
+            'message' => 'Comment deleted'
+        ]);
     }
-    
+
+    sendResponse([
+        'success' => false,
+        'message' => 'Comment not found'
+    ], 404);
 }
 
 
@@ -591,7 +599,7 @@ if ($action === 'comment') {
         // TODO: sendResponse HTTP 405 Method Not Allowed.
         sendResponse(['success' => false, 'message' => 'Method Not Allowed'], 405);
     }
-    }
+    
 
 } catch (PDOException $e) {
     // TODO: Log the error with error_log().
