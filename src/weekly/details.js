@@ -222,7 +222,7 @@ async function handleAddComment(event) {
  */
 async function initializePage() {
   // ... your implementation here ...
-   currentWeekId = getWeekIdFromURL();
+   currentWeekId = Number(getWeekIdFromURL());
   if (!currentWeekId) {
     weekTitle.textContent = "Week not found.";
     return;
