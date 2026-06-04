@@ -93,6 +93,7 @@ function renderWeekDetails(week) {
   weekDescription.textContent = week.description;
 
   weekLinksList.innerHTML = '';
+  if (Array.isArray(week.links)) {
   week.links.forEach(url => {
     const li = document.createElement('li');
     const a  = document.createElement('a');
@@ -177,7 +178,7 @@ async function handleAddComment(event) {
 
   const commentText = newCommentInput.value.trim();
   if (!commentText) return;
-
+try{
   const response = await fetch('./api/index.php?action=comment', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -185,7 +186,7 @@ async function handleAddComment(event) {
     week_id: Number(currentWeekId),
     author: "Student",
     text: commentText
-})
+}
   });
   const result = await response.json();
 
@@ -194,7 +195,8 @@ async function handleAddComment(event) {
     renderComments();
     newCommentInput.value = '';
   }
-}
+}catch (err) {
+  console.error(err);}
 
 /**
  * TODO: Implement initializePage (async).
@@ -240,7 +242,7 @@ async function initializePage() {
         if (weekResult.success) {
             renderWeekDetails(weekResult.data);
 
-            currentComments = commentsResult.success
+            currentComments =( commentsResult&&commentsResult.success )
                 ? commentsResult.data
                 : [];
 
