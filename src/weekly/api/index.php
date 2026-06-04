@@ -177,7 +177,6 @@ function getAllWeeks(PDO $db): void
     sendResponse(['success' => true, 'data' => $weeks]);
 }
 
-
 /**
  * Get a single week by its integer primary key.
  * Method: GET with ?id={id}.
@@ -207,7 +206,7 @@ function getWeekById(PDO $db, $id): void
         sendResponse(['success' => false, 'message' => 'Invalid id'], 400);
     }
 
-    $stmt = $db->prepare("SELECT * FROM weeks WHERE id = ?");
+    $stmt = $db->prepare("SELECT id, title, start_date, description, links, created_at FROM weeks WHERE id = ?");
     $stmt->execute([$id]);
 
     $week = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -460,7 +459,8 @@ function getCommentsByWeek(PDO $db, $weekId): void
     $stmt = $db->prepare("SELECT id, week_id, author, text, created_at FROM comments_week WHERE week_id = ? ORDER BY created_at ASC");
     $stmt->execute([$weekId]);
     $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    sendResponse(['success' => true, 'data' => $comments]);}
+    sendResponse(['success' => true, 'data' => $comments]); 
+}
 
 /**
  * Create a new comment.
