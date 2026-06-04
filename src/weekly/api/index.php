@@ -174,7 +174,9 @@ function getAllWeeks(PDO $db): void
         $row['links'] = json_decode($row['links'], true) ?? [];
     }
 
-    s
+    sendResponse(['success' => true, 'data' => $weeks]);
+}
+
 
 /**
  * Get a single week by its integer primary key.
@@ -200,7 +202,8 @@ function getWeekById(PDO $db, $id): void
     // If not found, sendResponse error with HTTP 404.
     
 
-   if (!isValidId($id)) {
+   if (!$id || !is_numeric($id)) {
+ 
         sendResponse(['success' => false, 'message' => 'Invalid id'], 400);
     }
 
