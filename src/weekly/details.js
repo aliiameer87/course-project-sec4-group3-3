@@ -117,7 +117,7 @@ function renderWeekDetails(week) {
  *   <article>
  *     <p>{comment.text}</p>
  *     <footer>Posted by: {comment.author}</footer>
- *   </article>
+ *   </article> 
  */
 function createCommentArticle(comment) {
   // ... your implementation here ...
