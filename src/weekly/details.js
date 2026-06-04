@@ -104,6 +104,7 @@ function renderWeekDetails(week) {
     weekLinksList.appendChild(li);
   });
 }
+}
 
 
 /**
@@ -232,7 +233,7 @@ async function handleAddComment(event) {
 async function initializePage() {
   // ... your implementation here ...
    currentWeekId = parseInt (getWeekIdFromURL(),10);
-  if (!currentWeekId) {
+  if (isNaN(currentWeekId)) {
     weekTitle.textContent = "Week not found.";
     return;
   }
