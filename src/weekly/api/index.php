@@ -319,10 +319,10 @@ function updateWeek(PDO $db, array $data): void
     // Prepare, bind all SET values, then bind id, and execute.
 
     // TODO: sendResponse HTTP 200 on success, HTTP 500 on failure.
-    {
+    
     if (empty($data['id'])) {
         sendResponse(['success' => false, 'message' => 'Missing id'], 400);
-    } }
+    } 
     $id = $data['id'];
 
     $stmt = $db->prepare("SELECT id FROM weeks WHERE id = ?");
@@ -391,28 +391,37 @@ function deleteWeek(PDO $db, $id): void
 
     // TODO: If rowCount() > 0, sendResponse HTTP 200.
     // Otherwise sendResponse HTTP 500.
-     if (!$id || !is_numeric($id)) {
+    if (!$id || !is_numeric($id)) {
         sendResponse([
             'success' => false,
             'message' => 'Invalid id'
         ], 400);
     }
+     $stmt = $db->prepare("SELECT id FROM weeks WHERE id = ?");
+    $stmt->execute([$id]);
 
-    $stmt = $db->prepare("DELETE FROM weeks WHERE id = ?");
+    if (!$stmt->fetch()) {
+        sendResponse([
+            'success' => false,
+            'message' => 'Week not found'
+        ], 404);
+    }
+     $stmt = $db->prepare("DELETE FROM weeks WHERE id = ?");
     $stmt->execute([$id]);
 
     if ($stmt->rowCount() > 0) {
         sendResponse([
             'success' => true,
             'message' => 'Week deleted'
-        ]);
+        ], 200);
     }
 
     sendResponse([
         'success' => false,
-        'message' => 'Week not found'
-    ], 404);
+        'message' => 'Failed to delete week'
+    ], 500);
 }
+    
 
 
 // ============================================================================
@@ -440,7 +449,7 @@ function getCommentsByWeek(PDO $db, $weekId): void
 
     // TODO: Fetch all rows. Return sendResponse with the array
     //       (empty array is valid).
-    {
+    
     if (!$weekId || !is_numeric($weekId)) {
         sendResponse(['success' => false, 'message' => 'Invalid week id'], 400);
     }
@@ -448,9 +457,7 @@ function getCommentsByWeek(PDO $db, $weekId): void
     $stmt = $db->prepare("SELECT id, week_id, author, text, created_at FROM comments_week WHERE week_id = ? ORDER BY created_at ASC");
     $stmt->execute([$weekId]);
     $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
     sendResponse(['success' => true, 'data' => $comments]);
-}
 }
 function createComment(PDO $db, array $data): void {
     if (empty($data['week_id']) || empty($data['author']) || empty(trim($data['text']))) {
@@ -524,22 +531,29 @@ function deleteComment(PDO $db, $commentId): void
         ], 400);
     }
 
-    $stmt = $db->prepare("DELETE FROM comments_week WHERE id = ?");
+    $stmt = $db->prepare("SELECT id FROM comments_week WHERE id = ?");
     $stmt->execute([$commentId]);
-
-    if ($stmt->rowCount() > 0) {
+    if (!$stmt->fetch()) {
+        sendResponse([
+            'success' => false,
+            'message' => 'Comment not found'
+        ], 404);
+    }
+     $stmt = $db->prepare("DELETE FROM comments_week WHERE id = ?");
+    $stmt->execute([$commentId]);
+     if ($stmt->rowCount() > 0) {
         sendResponse([
             'success' => true,
             'message' => 'Comment deleted'
-        ]);
+        ], 200);
     }
-
     sendResponse([
         'success' => false,
-        'message' => 'Comment not found'
-    ], 404);
+        'message' => 'Failed to delete comment'
+    ], 500);
 }
 
+  
 
 // ============================================================================
 // MAIN REQUEST ROUTER
