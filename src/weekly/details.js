@@ -104,6 +104,7 @@ function renderWeekDetails(week) {
     weekLinksList.appendChild(li);
   });
 }
+}
 
 /**
  * TODO: Implement createCommentArticle.
@@ -230,7 +231,7 @@ async function handleAddComment(event) {
  */
 async function initializePage() {
   // ... your implementation here ...
-   currentWeekId = Number(getWeekIdFromURL());
+   currentWeekId = Number(getWeekIdFromURL(),10);
   if (!currentWeekId) {
     weekTitle.textContent = "Week not found.";
     return;
