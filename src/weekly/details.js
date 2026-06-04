@@ -174,29 +174,35 @@ function renderComments() {
  */
 async function handleAddComment(event) {
   // ... your implementation here ...
+ 
   event.preventDefault();
 
   const commentText = newCommentInput.value.trim();
   if (!commentText) return;
-try{
-  const response = await fetch('./api/index.php?action=comment', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-    week_id: Number(currentWeekId),
-    author: "Student",
-    text: commentText
-}
-  });
-  const result = await response.json();
 
-  if (result.success) {
-    currentComments.push(result.data);
-    renderComments();
-    newCommentInput.value = '';
+  try {
+    const response = await fetch('./api/index.php?action=comment', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        week_id: Number(currentWeekId),
+        author: "Student",
+        text: commentText
+      })
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+      currentComments.push(result.data);
+      renderComments();
+      newCommentInput.value = '';
+    }
+
+  } catch (err) {
+    console.error(err);
   }
-}catch (err) {
-  console.error(err);}
+}
 
 /**
  * TODO: Implement initializePage (async).
